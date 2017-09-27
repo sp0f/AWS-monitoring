@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import boto3
 
 ec2 = boto3.resource('ec2')
