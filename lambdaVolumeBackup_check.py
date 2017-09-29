@@ -16,12 +16,11 @@ for volume in ec2.volumes.filter(Filters=[{'Name': 'tag:lambdaVolumeBackup', 'Va
         for snapshot in volume_snapshots:
             if snapshot.description.startswith('lambdaVolumeBackup-'):
                 snapshotCount=snapshotCount+1
-                #print snapshot.id+"("+str(snapshotCount)+")"
-        if (datetime.datetime.now().replace(tzinfo=None) - volume.create_time.replace(tzinfo=None) < datetime.timedelta(days=retention_days)):
-            new_volumes_list.append(volume.id+"("+str(volume.create_time)+")")
-            continue # skip newly created volumes
         if snapshotCount < retention_days:
-                    volume_list.append(volume.id+"("+str(snapshotCount)+")")
+            if (datetime.datetime.now().replace(tzinfo=None) - volume.create_time.replace(tzinfo=None) < datetime.timedelta(days=retention_days)):
+                new_volumes_list.append(volume.id+"("+str(volume.create_time)+")")
+            else:
+                volume_list.append(volume.id+"("+str(snapshotCount)+")")
 
 if len(volume_list) != 0:
     print "CRITICAL: backup retention problem (<"+str(retention_days)+") or no backup for volume(s): " + ", ".join(volume_list) + " | " + str(len(volume_list))
