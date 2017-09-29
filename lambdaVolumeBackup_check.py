@@ -19,7 +19,7 @@ for volume in ec2.volumes.filter(Filters=[{'Name': 'tag:lambdaVolumeBackup', 'Va
                 #print snapshot.id+"("+str(snapshotCount)+")"
         if (datetime.datetime.now().replace(tzinfo=None) - volume.create_time.replace(tzinfo=None) < datetime.timedelta(days=retention_days)):
             new_volumes_list.append(volume.id+"("+str(volume.create_time)+")")
-            break # skip newly created volumes
+            continue # skip newly created volumes
         if snapshotCount < retention_days:
                     volume_list.append(volume.id+"("+str(snapshotCount)+")")
 
