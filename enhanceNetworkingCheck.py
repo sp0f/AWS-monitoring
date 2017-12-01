@@ -20,8 +20,12 @@ exclude_file="exclude_list.txt"
 
 if os.path.isfile(exclude_file):
     with  open(exclude_file, 'r') as f:
-        for line in f:
-            exclude_list.append(f.readline())
+        while True:
+            line=f.readline()
+            if not line:
+                break
+            else:
+                exclude_list.append(f.readline())
 
 # print("\nVF\n")
 instances = ec2.instances.filter(
