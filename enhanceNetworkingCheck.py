@@ -49,8 +49,9 @@ for instance in instances:
         DryRun=False
     )
     if not sriovNetSupport['SriovNetSupport']:
-        vf_instance_list.append(instance.id+" "+getTag(instance,"Name"))
-        # print(getTag(instance,"Name")+" "+instance.id+" "+instance.instance_type)
+        if instance.id not in exclude_list:
+            vf_instance_list.append(instance.id+" "+getTag(instance,"Name"))
+            # print(getTag(instance,"Name")+" "+instance.id+" "+instance.instance_type)
 
 
 # print("\nENA\n")
@@ -78,8 +79,9 @@ instances = ec2.instances.filter(
 
 for instance in instances:
     if not instance.ena_support:
-        ena_instance_list.append(instance.id+" "+getTag(instance,"Name"))
-        # print(getTag(instance,"Name")+" "+instance.id+" "+instance.instance_type)
+        if instance.id not in exclude_list:
+            ena_instance_list.append(instance.id+" "+getTag(instance,"Name"))
+            # print(getTag(instance,"Name")+" "+instance.id+" "+instance.instance_type)
 
 if ( (len(vf_instance_list) != 0) or (len(ena_instance_list) != 0)):
     print("CRITICAL: instances without ENA ("+" ,".join(ena_instance_list)+") VF ("+" ,".join(vf_instance_list))
