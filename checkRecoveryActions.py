@@ -21,10 +21,15 @@ def findInstancesWithoutTag(tagName):
 
     instancesList = []  # list of instances without backup tag
     for instance in instances:
+        print(instance.id)
         tagFound = False
-        for tag in instance.tags:
-            if tag['Key'] == tagName:
-                tagFound = True
+        try:
+            for tag in instance.tags:
+                if tag['Key'] == tagName:
+                    tagFound = True
+        except NoneType:
+            instanceList.append(instance.id)
+            continue
         if tagFound == False:
             instancesList.append(instance.id)
     return instancesList
