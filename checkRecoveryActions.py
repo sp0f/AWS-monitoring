@@ -21,7 +21,7 @@ def findInstancesWithoutTag(tagName):
 
     instancesList = []  # list of instances without backup tag
     for instance in instances:
-        print(instance.id)
+        # print(instance.id)
         tagFound = False
         try:
             for tag in instance.tags:
@@ -56,7 +56,8 @@ def main():
 
     recoveryEnabledInstances=[]
     for alarm in alarmList['MetricAlarms']:
-        recoveryEnabledInstances.append(alarm['Dimensions'][0]['Value'])
+        if len(alarm['Dimensions']) != 0:
+            recoveryEnabledInstances.append(alarm['Dimensions'][0]['Value'])
 
     taggedInstances = getInstancesWithTagValue("autorecovery","true")
     untaggedInstances = findInstancesWithoutTag("autorecovery")
