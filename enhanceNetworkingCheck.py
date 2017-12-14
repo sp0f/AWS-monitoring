@@ -25,7 +25,7 @@ if os.path.isfile(exclude_file):
             if not line:
                 break
             else:
-                exclude_list.append(f.readline())
+                exclude_list.append(line.rstrip())
 
 # print("\nVF\n")
 instances = ec2.instances.filter(
@@ -88,8 +88,8 @@ for instance in instances:
             # print(getTag(instance,"Name")+" "+instance.id+" "+instance.instance_type)
 
 if ( (len(vf_instance_list) != 0) or (len(ena_instance_list) != 0)):
-    print("CRITICAL: instances without ENA ("+" ,".join(ena_instance_list)+") VF ("+" ,".join(vf_instance_list))
+    print("CRITICAL: instances without ENA ("+" ,".join(ena_instance_list)+") VF ("+" ,".join(vf_instance_list)+")")
     exit(2)
 else:
-    print("OK")
+    print("OK - (excluded: "+" ".join(exclude_list)+")")
     exit(0)
