@@ -20,6 +20,8 @@ for bucket in buckets:
         if err.response['Error']['Code'] == "ServerSideEncryptionConfigurationNotFoundError":
             # print(bucket.name)
             unencrypted_bucket_list.append(bucket.name)
+        else:
+            raise err
 
 if len(unencrypted_bucket_list) != 0:
     print("CRITICAL - unencrypted buckets: "+" ".join(unencrypted_bucket_list))
