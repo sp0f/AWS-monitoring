@@ -43,5 +43,5 @@ if len(unencrypted_bucket_list) != 0:
     print("CRITICAL - unencrypted buckets: "+" ".join(unencrypted_bucket_list))
     exit(2)
 else:
-    print("OK - all buckets set with default encryption")
+    print("OK - all buckets set with default encryption (excluded: "+" ".join(exclude_list)+")")
     exit(0)
