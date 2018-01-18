@@ -38,7 +38,7 @@ for bucket in buckets:
         if err.response['Error']['Code'] == "ServerSideEncryptionConfigurationNotFoundError":
             # print(bucket.name)
             #if bucket.name not in exclude_list:
-            #    unencrypted_bucket_list.append(bucket.name)
+            unencrypted_bucket_list.append(bucket.name)
         else:
             raise err
 
