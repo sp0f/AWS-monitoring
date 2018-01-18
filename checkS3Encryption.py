@@ -24,9 +24,12 @@ if os.path.isfile(exclude_file):
             else:
                 exclude_list.append(line.rstrip())
 
+
 # print(exclude_list)
 
 for bucket in buckets:
+    if bucket.name in exclude_list:
+        continue
     try:
         response=s3client.get_bucket_encryption(
             Bucket=bucket.name
@@ -34,8 +37,8 @@ for bucket in buckets:
     except botocore.exceptions.ClientError as err:
         if err.response['Error']['Code'] == "ServerSideEncryptionConfigurationNotFoundError":
             # print(bucket.name)
-            if bucket.name not in exclude_list:
-                unencrypted_bucket_list.append(bucket.name)
+            #if bucket.name not in exclude_list:
+            #    unencrypted_bucket_list.append(bucket.name)
         else:
             raise err
 
