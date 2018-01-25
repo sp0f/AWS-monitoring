@@ -16,7 +16,7 @@ def all_ami_snapshots():
             },
             {
                 'Name': 'description',
-                'Values': ['Created by CreateImage*']
+                'Values': ['Created by CreateImage*','Copied for DestinationAmi*']
             }
         ],
         OwnerIds=[owner_id,]
