@@ -35,6 +35,8 @@ for bucket in buckets:
             Bucket=bucket.name
         )
     except botocore.exceptions.ClientError as err:
+        if err.response['Error']['Code'] == "NoSuchBucket":
+            continue
         if err.response['Error']['Code'] == "ServerSideEncryptionConfigurationNotFoundError":
             # print(bucket.name)
             #if bucket.name not in exclude_list:
