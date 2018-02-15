@@ -61,7 +61,7 @@ def main():
         print(criticalMessage)
         exit(2)
     else:
-        print("OK")
+        print("OK, excluded:"+" ".join(exclude_list))
         exit(0)
 
 
