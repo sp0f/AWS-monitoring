@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import boto3
 from sys import exit
@@ -38,8 +38,6 @@ def abandoned_snapshots_list(all_ami_snapshots):
         for ami in amis:
             if ami['ImageId'] in snap['Description']:
                 snap_is_abandoned = False
-            if ami['ImageId'] == 'ami-4c6c8435':
-                print 'Found image ami-4c6c8435'
         if snap_is_abandoned:
             abandoned_snapshots.append(snap['SnapshotId'])
 
@@ -63,6 +61,17 @@ def find_untaged_snapshots(tagKey,snapshot_ids):
         if no_tag:
             untagged_snapshots.append(snap['SnapshotId'])
     return untagged_snapshots
+
+def find_unencrypted_snapshots(snapshot_ids):
+    unencrypted_snapshots=[]
+    snapshots = ec2.describe_snapshots(SnapshotIds=snapshot_ids)['Snapshots']
+
+    for snap in snapshots:
+        if snap['Encrypted'] is False:
+            unencrypted_snapshots.append(snap['SnapshotId'])
+    return unencrypted_snapshots
+
+
 
 def main():
     ami_snapshots = all_ami_snapshots()
@@ -89,6 +98,7 @@ def main():
     # dirty magic, dirty tricks
     non_ami_snapshots = list(set(all_snapshots_ids)-set(ami_snapshots_ids))
     untagged_snapshots = find_untaged_snapshots('archive',non_ami_snapshots)
+    unencrypted_snapshots = find_unencrypted_snapshots(non_ami_snapshots)
 
 
     # Nagios check output
@@ -101,12 +111,14 @@ def main():
     if len(untagged_snapshots) != 0:
         criticalMessage = criticalMessage + " untagged snapshots: " + " ".join(untagged_snapshots)
 
+    if len(unencrypted_snapshots) != 0:
+        criticalMessage = criticalMessage + " unencrypted snapshots: " + " ".join(unencrypted_snapshots)
     # return check message and status
     if criticalMessage != "CRITICAL":
-        print criticalMessage
+        print(criticalMessage)
         exit(2)
     else:
-        print "OK"
+        print("OK")
         exit(0)
 
 
