@@ -25,6 +25,9 @@ def find_unencrypted_volumes(exclude_list=None):
         for volume in unencrypted_volume_list:
             if volume['VolumeId'] not in exclude_list:
                 bad_volume_list.append(volume['VolumeId'])
+    else:
+        for volume in unencrypted_volume_list:
+            bad_volume_list.append(volume['VolumeId'])
 
     return bad_volume_list
 
