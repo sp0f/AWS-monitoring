@@ -6,6 +6,10 @@ from datetime import datetime, timedelta
 
 ec2 = boto3.client('ec2')
 
+# how old is to old
+too_old=timedelta(days=16)
+exclude_tag='archive'
+
 def find_old_images(too_old):
     old_images=[]
     all_images=ec2.describe_images(
@@ -16,11 +20,11 @@ def find_old_images(too_old):
         creation_date = datetime.strptime(image['CreationDate'], "%Y-%m-%dT%H:%M:%S.000Z")
 
         if creation_date < datetime.now()-too_old:
-            # exclude images with tag 'archive' set to anything
+            # exclude images with tag defined by exclude_tag variable, tag could be set to anything
             if 'Tags' in image.keys():
                 archive=False
                 for tag in image['Tags']:
-                    if tag['Key'] == 'archive':
+                    if tag['Key'] == exclude_tag:
                         archive=True
                 if not archive:
                     old_images.append(image['ImageId'])
@@ -34,7 +38,6 @@ def find_old_images(too_old):
 
 
 def main():
-    too_old=timedelta(days=16)
     old_images=find_old_images(too_old)
 
     # Nagios check output
