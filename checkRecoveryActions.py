@@ -52,12 +52,21 @@ def getTag(taggedObject, tagKey):
     return None
 
 def main():
-    alarmList = cloudwatch.describe_alarms(MaxRecords=100)
-
+    kwargs = {
+        'MaxRecords': 100
+    }
     recoveryEnabledInstances=[]
-    for alarm in alarmList['MetricAlarms']:
-        if len(alarm['Dimensions']) != 0:
-            recoveryEnabledInstances.append(alarm['Dimensions'][0]['Value'])
+
+    while True:
+        alarmList = cloudwatch.describe_alarms(**kwargs)
+
+        for alarm in alarmList['MetricAlarms']:
+            if len(alarm['Dimensions']) != 0:
+                recoveryEnabledInstances.append(alarm['Dimensions'][0]['Value'])
+        try:
+            kwargs['NextToken'] = alarmList['NextToken']
+        except KeyError:
+            break
 
     taggedInstances = getInstancesWithTagValue("autorecovery","true")
     untaggedInstances = findInstancesWithoutTag("autorecovery")
