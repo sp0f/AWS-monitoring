@@ -61,7 +61,8 @@ def main():
         alarmList = cloudwatch.describe_alarms(**kwargs)
 
         for alarm in alarmList['MetricAlarms']:
-            if len(alarm['Dimensions']) != 0:
+            # print(alarm)
+            if len(alarm['Dimensions']) != 0 and 'arn:aws:automate:eu-west-1:ec2:recover' in alarm['AlarmActions']:
                 recoveryEnabledInstances.append(alarm['Dimensions'][0]['Value'])
         try:
             kwargs['NextToken'] = alarmList['NextToken']
