@@ -1,25 +1,40 @@
 #!/usr/bin/python
 # coding: utf-8
 
+"""Compliance check. Search for instances without required tagKey."""
 from sys import exit
 import boto3
 
-ec2 = boto3.resource('ec2')
+
+aws_region = 'eu-west-1'
+aws_profile = 'default'
+
 required_tags = ("backup", "autorecovery", "Patch Group")
+
+session = boto3.Session(region_name=aws_region, profile_name=aws_profile)
+ec2 = session.resource('ec2')
 
 
 def find_untagged_instances(instance_tag):
     """Find instances without backup tag."""
-    instances = ec2.instances.all()
+    instances = ec2.instances.filter(Filters=[
+        {
+            'Name': 'instance-state-name',
+            'Values': ['pending', 'running', 'shutting-down', 'stopping', 'stopped']
+        }
+    ])
 
     instancesList = []  # list of instances without backup tag
     for instance in instances:
         configured = False
-        for tag in instance.tags:
-            if tag['Key'] == instance_tag:
-                configured = True
-        if configured is False:
-            instancesList.append(instance)
+        if instance.tags:
+            for tag in instance.tags:
+                if tag['Key'] == instance_tag:
+                    configured = True
+            if configured is False:
+                instancesList.append(instance)
+        else:
+            instancesList.apppend(instance)
     return instancesList
 
 
