@@ -11,7 +11,7 @@ aws_profile = 'default'
 
 required_tags = ("backup", "autorecovery", "Patch Group")
 
-session = boto3.Session(region_name=aws_region, profile_name=aws_profile)
+session = boto3.Session(region_name=aws_region)
 ec2 = session.resource('ec2')
 
 
