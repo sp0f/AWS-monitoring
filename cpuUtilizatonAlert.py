@@ -5,6 +5,7 @@ import boto3
 # session = boto3.Session(profile_name='dv')
 ec2 = boto3.resource('ec2')
 cloudwatch = boto3.client('cloudwatch')
+instance_states = ["running", "shutting-down", "stopping"]
 
 
 def get_tag(tagged_object, tag_key):
@@ -23,7 +24,13 @@ def get_instance_names():
     return inst_names
 
 def get_instances_id():
-    instances = ec2.instances.all()
+    # instances = ec2.instances.all()
+    instances = ec2.instances.filter(Filters=[
+        {
+            "Name": "instance-state-name",
+            "Values": instance_states
+        }
+    ])
     inst_ids = []
     for instance in instances:
         inst_ids.append(instance.id)
