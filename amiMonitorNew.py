@@ -5,7 +5,8 @@ import boto3
 import re
 from datetime import datetime
 
-ec2 = boto3.client('ec2')
+region_name = 'eu-west-1' # AWS region
+ec2 = boto3.client('ec2', region_name=region_name)
 
 
 required_tags = {
