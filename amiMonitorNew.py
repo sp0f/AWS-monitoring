@@ -25,9 +25,10 @@ ami_expired = [] # expired ami list
 
 def get_tag(tagged_object, tag_key):
     """get tag defined by tag_key param for collection(ec2.Instance, ec2.Image etc.)"""
-    for tag in tagged_object['Tags']:
-        if tag['Key'] == tag_key:
-            return tag['Value']
+    if 'Tags' in tagged_object:
+        for tag in tagged_object['Tags']:
+            if tag['Key'] == tag_key:
+                return tag['Value']
     return None
 
 
