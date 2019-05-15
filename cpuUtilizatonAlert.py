@@ -6,6 +6,7 @@ import boto3
 ec2 = boto3.resource('ec2')
 cloudwatch = boto3.client('cloudwatch')
 instance_states = ["running", "shutting-down", "stopping"]
+exclude_list = ['i-d9cf304f', 'i-084810f756635948f'] 
 
 
 def get_tag(tagged_object, tag_key):
@@ -33,7 +34,8 @@ def get_instances_id():
     ])
     inst_ids = []
     for instance in instances:
-        inst_ids.append(instance.id)
+	if instance.id not in exclude_list:
+        	inst_ids.append(instance.id)
     return inst_ids
 
 
