@@ -34,8 +34,9 @@ def get_instances_id():
     ])
     inst_ids = []
     for instance in instances:
-	if instance.id not in exclude_list:
-        	inst_ids.append(instance.id)
+        cpuUtilizationAlert=get_tag(instance,'cpuUtilization')
+        if ((instance.id not in exclude_list) and (str(cpuUtilizationAlert).lower() != "false")):
+            inst_ids.append(instance.id)
     return inst_ids
 
 
