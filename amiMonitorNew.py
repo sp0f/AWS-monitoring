@@ -3,15 +3,15 @@
 
 import boto3
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 
 region_name = 'eu-west-1' # AWS region
 ec2 = boto3.client('ec2', region_name=region_name)
 
-
+max_age=180 # in days
 required_tags = {
     'issueID': re.compile(".*"),
-    'expireDate': re.compile("\d\d-\d\d-\d\d\d\d|^0"),
+    'expireDate': re.compile("\d\d-\d\d-\d\d\d\d"),
     'comment': re.compile(".+")
 }
 
@@ -62,10 +62,14 @@ def find_naughty_ami(ami_list):
                         ami_wrong_tag[ami['ImageId']] = [tag,]
                     # ami_wrong_tag.append(ami['ImageId'])
                 elif (tag == 'expireDate'):
-                    if(tag_value == '0'):
-                        continue
-                    if(datetime.strptime(tag_value, "%d-%m-%Y") <= datetime.today()):
+                    expire_datetime=datetime.strptime(tag_value, "%d-%m-%Y")
+                    if(expire_datetime <= datetime.today()):
                         ami_expired.append(ami['ImageId'])
+                    if(expire_datetime >= (datetime.today()+timedelta(days=max_age))):
+                        if ami['ImageId'] in ami_wrong_tag:
+                            ami_wrong_tag[ami['ImageId']].append(tag)
+                        else:
+                            ami_wrong_tag[ami['ImageId']] = [tag, ]
 
 
 def main():
@@ -90,13 +94,13 @@ def main():
             criticalMessage += ' '.join(ami_missing_tags[ami])
             criticalMessage +=") "
     if(ami_wrong_tag):
-        criticalMessage += "wrong tag value: "
+        criticalMessage += " wrong tag value or expireDate > "+str(max_age)+" : "
         for ami in ami_wrong_tag:
             criticalMessage += ami+"("
             criticalMessage += ' '.join(ami_wrong_tag[ami])
             criticalMessage +=") "
     if(ami_expired):
-        criticalMessage += "expired images: "
+        criticalMessage += " expired images: "
         criticalMessage += ' '.join(ami_expired)
 
     # print(criticalMessage)
