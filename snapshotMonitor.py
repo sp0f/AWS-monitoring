@@ -79,7 +79,7 @@ def verify_expire_tag(snapshot_ids, tag_key):
                     if (not expire_date_format.fullmatch(tag['Value'])):
                         expire_date_format.append(snap['SnapshotId'])
                     expire_datetime = datetime.strptime(tag['Value'], "%d-%m-%Y")
-                    if (expire_datetime <= datetime.today()):
+                    if (expire_datetime < datetime.today()):
                         expired_snapshots.append(snap['SnapshotId'])
                     if (expire_datetime >= (datetime.today() + timedelta(days=max_age))):
                         expired_snapshots.append((snap['SnapshotId']))
