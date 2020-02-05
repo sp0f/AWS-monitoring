@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 
 owner_id = '260187409195'
 ec2 = boto3.client('ec2')
-max_age = 180 # days
+max_age = 465 # days
 
 def all_ami_snapshots():
     """Return list of all snapshots ids related to AMI"""
@@ -77,16 +77,16 @@ def verify_expire_tag(snapshot_ids, tag_key):
             for tag in snap['Tags']:
                 if tag['Key'] == tag_key:
                     if (not expire_date_format.fullmatch(tag['Value'])):
-                        expire_date_format.append(snap['SnapshotId'])
+                        expire_snapshots.append(snap['SnapshotId']+"-wrong-date")
                     expire_datetime = datetime.strptime(tag['Value'], "%d-%m-%Y")
-                    if (expire_datetime < datetime.today()):
-                        expired_snapshots.append(snap['SnapshotId'])
+                    if (expire_datetime.date() < datetime.today().date()):
+                        expired_snapshots.append(snap['SnapshotId']+"-expired")
                     if (expire_datetime >= (datetime.today() + timedelta(days=max_age))):
-                        expired_snapshots.append((snap['SnapshotId']))
+                        expired_snapshots.append((snap['SnapshotId']+"-expire-to-long"))
                     else:
                         no_tag = False
         if no_tag:
-            expired_snapshots.append(snap['SnapshotId'])
+            expired_snapshots.append(snap['SnapshotId']+'-notag')
 
     return expired_snapshots
 
