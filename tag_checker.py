@@ -9,7 +9,7 @@ import boto3
 aws_region = 'eu-west-1'
 aws_profile = 'default'
 
-required_tags = ("backup", "autorecovery", "Patch Group")
+required_tags = ("backup", "autorecovery", "Patch Group", "boundryProtected")
 
 session = boto3.Session(region_name=aws_region)
 ec2 = session.resource('ec2')
